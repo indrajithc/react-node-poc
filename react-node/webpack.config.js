@@ -50,5 +50,5 @@ module.exports = {
       inject: false, // Prevents Webpack from auto-injecting CSS/JS
     }),
   ],
-  mode: "development",
+  mode: "production",
 };
