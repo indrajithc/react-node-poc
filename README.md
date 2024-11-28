@@ -20,43 +20,48 @@ This is a proof-of-concept (POC) application to demonstrate how to integrate Rea
 1. Clone the repository:
 
    ```
-   git clone https://github.com/indrajithc/react-node-poc.git
+   git clone https://github.com//react-node-poc.git
    cd react-node-poc
    ```
 
-2. Install dependencies:
 
-   ```
-   npm install
-   ```
+### 2. Install Dependencies
+Before building the React app, you need to install the required dependencies. Run the following command:
+```bash
+npm install
+```
 
-3. Build the React app:
 
-   ```
-   npm run build
-   ```
+### 3. Build the React App for Deployment
+To build the React app and copy the output to the JSP server’s `jsp-webapp` folder, run the following command:
+```bash
+npm run build:deploy
+```
 
-4. Start the Node.js server:
 
-   ```
-   npm run start
-   ```
+This command will:
+- Build the React app.
+- Copy the build output (JavaScript, CSS, HTML) to the `jsp-webapp` folder.
 
-The app will be available at `http://localhost:3000`.
 
-## Running in Development
+### 4. Start the JSP Server
+Once the build process is complete, you can start the JSP server. This can be done based on your specific server setup. For example, if you're using **Tomcat**, you can start the server by navigating to the `bin` folder inside your Tomcat directory and running:
+```bash
+./startup.sh  # For Linux/Mac
+./startup.bat # For Windows
+```
 
-To build and start the app in development mode:
 
-1. Run the following command:
+### 5. Access the Application in the Browser
+Once the JSP server is running, open your browser and go to:
+```
+http://localhost:8080/jsp-webapp/
+```
 
-   ```
-   npm run dev
-   ```
+This should load your React app integrated within your JSP server.
 
-This will start the server and automatically rebuild the app on code changes.
+---
 
-## Notes
-
-- The app uses mock data, but this can be replaced with real API endpoints in future stages.
-- This setup is designed to be the first step towards integrating React with Oracle ATG and other systems.
+### Additional Notes
+- Ensure that your JSP server (e.g., Tomcat) is correctly configured to serve static files like JavaScript and CSS.
+- If there are any issues with the file paths or deployment, check the server logs for errors related to missing files or permissions. 
