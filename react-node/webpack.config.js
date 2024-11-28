@@ -1,13 +1,13 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const htmlContent = require("./renderStaticHTML.js")();
 
 module.exports = {
   entry: "./src/index.js",
   output: {
     path: path.resolve(process.cwd(), "dist"),
-    filename: "bundle.js",
+    filename: "js/bundle.js",
     clean: true,
   },
   module: {
@@ -19,7 +19,7 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader"],
       },
     ],
   },
@@ -27,6 +27,9 @@ module.exports = {
     extensions: [".js", ".jsx"],
   },
   plugins: [
+    new MiniCssExtractPlugin({
+      filename: "css/styles.css", // Extract CSS into css/styles.css file
+    }),
     new HtmlWebpackPlugin({
       title: "React Node.js POC",
       templateContent: `
@@ -36,12 +39,15 @@ module.exports = {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>React Node.js POC</title>
+            <script defer src="js/bundle.js"></script> <!-- Link to extracted JS -->
+            <link rel="stylesheet" href="css/styles.css"> <!-- Link to extracted CSS -->
           </head>
           <body>
             <div id="root">${htmlContent}</div>
           </body>
         </html>
       `,
+      inject: false, // Prevents Webpack from auto-injecting CSS/JS
     }),
   ],
   mode: "development",
