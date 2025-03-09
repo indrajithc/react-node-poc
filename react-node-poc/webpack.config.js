@@ -4,7 +4,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = async () => {
-  const htmlContent = await require("./renderStaticHTML.js")();
+  const {
+    html: htmlContent,
+    props,
+  } = await require("./renderStaticHTML.js")();
 
   return {
     entry: "./src/index.js",
@@ -56,6 +59,9 @@ module.exports = async () => {
             </head>
             <body>
               <div id="root">${htmlContent}</div>
+              <script type="text/javascript">
+                window.__REACT_PROPS__ = JSON.parse(\`${JSON.stringify(props)}\`);
+              </script>
               ${htmlWebpackPlugin.tags.bodyTags} <!-- Auto-inject JS scripts -->
             </body>
           </html>

@@ -15,14 +15,16 @@ const handler =  () => new Promise((resolve, reject) => {
     fetch("https://reqres.in/api/users?page=2").then((response) => {
       return response.json();
     }).then((data) => {
-      console.log({
 
-        list : data.data
+      const props = {
+        list: data.data
+      };
+      const outputHtml = React.createElement(App, props);
+
+      resolve({
+        html: ReactDOMServer.renderToString(outputHtml),
+        props
       });
-
-      const outputHtml = React.createElement(App, { list: data.data });
-
-      resolve(ReactDOMServer.renderToStaticMarkup(outputHtml));
     }
     ).catch((error) => {
       console.error("Error fetching data:", error);
