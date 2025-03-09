@@ -6,6 +6,9 @@ const Component = React.lazy(() => import("./Component"));
 const App = (props) => {
   const [message, setMessage] = React.useState("Hello, World!");
 
+  const [enableComponent, setEnableComponent] = React.useState(false);
+
+
   const id = useMemo(() => Math.random(), []);
 
   useEffect(() => {
@@ -14,10 +17,13 @@ const App = (props) => {
 
   return (
     <div>
-        <Suspense fallback={<div>Loading...</div>}>
-        <Component />
-      </Suspense>
-
+      <button onClick={() => setEnableComponent(true)}>Enable Component</button>
+      {
+        enableComponent && <Suspense fallback={<div>Loading...</div>}>
+          <Component />
+        </Suspense>
+      }
+        
       <br></br>
       <h1>{message}</h1>
       {(props.list || []).map((item) => (
