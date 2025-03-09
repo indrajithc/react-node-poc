@@ -1,12 +1,15 @@
 import React, { useEffect, useMemo, Suspense } from "react";
 // import Component from "./Component";
+// import SComponent from "./SComponent";
 
 const Component = React.lazy(() => import("./Component"));
+const SComponent = React.lazy(() => import("./SComponent"));
 
 const App = (props) => {
   const [message, setMessage] = React.useState("Hello, World!");
 
   const [enableComponent, setEnableComponent] = React.useState(false);
+  const [enableSComponent, setEnableSComponent] = React.useState(false);
 
 
   const id = useMemo(() => Math.random(), []);
@@ -17,6 +20,12 @@ const App = (props) => {
 
   return (
     <div>
+      <button onClick={() => setEnableSComponent(true)}>Enable SComponent</button>
+      {
+        enableSComponent &&  <Suspense fallback={<div>S Loading...</div>}>
+        <SComponent />
+      </Suspense>
+      }
       <button onClick={() => setEnableComponent(true)}>Enable Component</button>
       {
         enableComponent && <Suspense fallback={<div>Loading...</div>}>
