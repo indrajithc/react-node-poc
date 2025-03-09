@@ -19,7 +19,10 @@ const handler =  () => new Promise((resolve, reject) => {
 
         list : data.data
       });
-      resolve(ReactDOMServer.renderToStaticMarkup(React.createElement(App, { list: data.data })));
+
+      const outputHtml = React.createElement(App, { list: data.data });
+
+      resolve(ReactDOMServer.renderToStaticMarkup(outputHtml));
     }
     ).catch((error) => {
       console.error("Error fetching data:", error);
