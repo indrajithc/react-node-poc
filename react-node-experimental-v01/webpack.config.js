@@ -63,7 +63,30 @@ module.exports = async () => {
             <body>
               <div id="root">${htmlContent}</div>
               <script type="text/javascript">
-                window.__REACT_PROPS__ = JSON.parse(\`${JSON.stringify(props)}\`);
+                window.__REACT_PROPS__ = JSON.parse(\`${JSON.stringify(
+                  props
+                )}\`);
+              </script>
+              <script type="text/javascript">
+
+              
+               
+              fetch("/js/vendors.js").then((response) => {
+                return response.text();
+              }).then((code) => {
+                const script = document.createElement("script");
+                script.textContent = code;
+                document.body.appendChild(script);
+
+                ["js/root.js", "js/app.js"].forEach((src) => {
+                  const script = document.createElement("script");
+                  script.src = src;
+                  document.body.appendChild(script);
+                }
+                );
+
+              });
+
               </script>
               <script async src="js/vendors.js"></script> <!-- Other dependencies -->
               <script async src="js/root.js"></script> <!-- Load React first -->
