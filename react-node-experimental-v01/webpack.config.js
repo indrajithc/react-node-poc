@@ -5,7 +5,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = async () => {
   
-  const htmlContent = await require("./renderStaticHTML.js")();
+  const {
+    html: htmlContent,
+    props,
+  } = await require("./renderStaticHTML.js")();
+
   return ( {
     entry: "./src/index.js",
     output: {
@@ -42,12 +46,15 @@ module.exports = async () => {
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <title>React Node.js POC</title>
-              <script defer src="js/bundle.js"></script> <!-- Link to extracted JS -->
               <link rel="stylesheet" href="css/styles.css"> <!-- Link to extracted CSS -->
-            </head>
-            <body>
+              </head>
+              <body>
               <div id="root">${htmlContent}</div>
-            </body>
+               <script type="text/javascript">
+                window.__REACT_PROPS__ = JSON.parse(\`${JSON.stringify(props)}\`);
+              </script>
+              <script defer src="js/bundle.js"></script> <!-- Link to extracted JS -->
+              </body>
           </html>
         `,
         inject: false, // Prevents Webpack from auto-injecting CSS/JS

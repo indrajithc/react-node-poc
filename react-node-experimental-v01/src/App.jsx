@@ -21,7 +21,7 @@ setMessage(e => e + "_" + id)
       }
 
       <h4>{id}</h4>
-      <button  onClick={() =>{ setMessage("Hello, React!"); alert("dd");}}>Click me!</button>
+      <button  onClick={() => setMessage("Hello, React!")}>Click me!</button>
     </div>
   );
 };
