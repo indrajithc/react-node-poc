@@ -81,16 +81,14 @@ module.exports = async () => {
                 ["js/root.js", "js/app.js"].forEach((src) => {
                   const script = document.createElement("script");
                   script.src = src;
+                  script.async = true;
                   document.body.appendChild(script);
                 }
                 );
 
               });
 
-              </script>
-              <script async src="js/vendors.js"></script> <!-- Other dependencies -->
-              <script async src="js/root.js"></script> <!-- Load React first -->
-              <script defer src="js/app.js"></script> <!-- App logic -->
+              </script> 
             </body>
           </html>
         `,
