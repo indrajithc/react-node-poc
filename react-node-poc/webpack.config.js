@@ -11,7 +11,7 @@ module.exports = async () => {
     output: {
       path: path.resolve(process.cwd(), "dist"),
       filename: "js/[name].[contenthash].js",
-      chunkFilename: "js/[name].[contenthash].js", // Split chunk filenames
+      chunkFilename: "js/[name].[contenthash].js", // Ensure chunk names are dynamic
       clean: true,
     },
     module: {
@@ -33,50 +33,34 @@ module.exports = async () => {
     optimization: {
       splitChunks: {
         chunks: "all",
-        minSize: 50 * 1024, // 50KB minimum size to trigger split
-        maxSize: 100 * 1024, // If a chunk exceeds 100KB, split into smaller parts
-        cacheGroups: {
-          vendors: {
-            test: /[\\/]node_modules[\\/]/,
-            name: "vendors",
-            priority: 10,
-            enforce: true,
-          },
-          commons: {
-            test: /[\\/]src[\\/]/,
-            name: "commons",
-            minChunks: 2,
-            priority: 5,
-          },
-        },
+        minSize: 50 * 1024, // Split chunks if size > 50KB
+        maxSize: 100 * 1024, // Ensure no chunk is over 100KB
       },
       minimize: true,
       minimizer: [new TerserPlugin({ parallel: true })], // Minify JS
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: "css/styles.css",
+        filename: "css/styles.[contenthash].css", // Use contenthash for cache busting
       }),
       new HtmlWebpackPlugin({
         title: "React Node.js POC",
-        templateContent: `
+        templateContent: ({ htmlWebpackPlugin }) => `
           <!DOCTYPE html>
           <html lang="en">
             <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
               <title>React Node.js POC</title>
-              <script defer src="js/vendors.[contenthash].js"></script>
-              <script defer src="js/commons.[contenthash].js"></script>
-              <script defer src="js/main.[contenthash].js"></script>
-              <link rel="stylesheet" href="css/styles.css">
+              ${htmlWebpackPlugin.tags.headTags} <!-- Auto-inject CSS/JS -->
             </head>
             <body>
               <div id="root">${htmlContent}</div>
+              ${htmlWebpackPlugin.tags.bodyTags} <!-- Auto-inject JS scripts -->
             </body>
           </html>
         `,
-        inject: false,
+        inject: "body", // Webpack will auto-inject script tags
       }),
     ],
     mode: "production",
