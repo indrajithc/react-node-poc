@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, Suspense } from "react";
 // import Component from "./Component";
 // import SComponent from "./SComponent";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+// Import Swiper styles
+import "swiper/css";
 
 const Component = React.lazy(() => import("./Component"));
 const SComponent = React.lazy(() => import("./SComponent"));
@@ -20,6 +24,18 @@ const App = (props) => {
 
   return (
     <div>
+       <Swiper className="mySwiper">
+        <SwiperSlide>Slide 1</SwiperSlide>
+        <SwiperSlide>Slide 2</SwiperSlide>
+        <SwiperSlide>Slide 3</SwiperSlide>
+        <SwiperSlide>Slide 4</SwiperSlide>
+        <SwiperSlide>Slide 5</SwiperSlide>
+        <SwiperSlide>Slide 6</SwiperSlide>
+        <SwiperSlide>Slide 7</SwiperSlide>
+        <SwiperSlide>Slide 8</SwiperSlide>
+        <SwiperSlide>Slide 9</SwiperSlide>
+      </Swiper>
+
       <button onClick={() => setEnableSComponent(true)}>Enable SComponent</button>
       {
         enableSComponent &&  <Suspense fallback={<div>S Loading...</div>}>

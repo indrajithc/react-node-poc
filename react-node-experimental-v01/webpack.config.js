@@ -7,19 +7,27 @@ module.exports = async () => {
 
   return {
     entry: {
-      root: ["react", "react-dom"], // React-specific JS (like jQuery)
-      app: "./src/index.js", // Main application logic
+      root: ["react", "react-dom"], // ✅ Forces React & ReactDOM into root.js
+      app: {
+        import: "./src/index.js",
+        dependOn: "root", // ✅ Ensures app depends on React
+      },
     },
     output: {
       path: path.resolve(process.cwd(), "dist"),
-      filename: "js/[name].js", // Fixed name for root.js
+      filename: "js/[name].js", // ✅ root.js & app.js
       chunkFilename: "js/[name].[contenthash].js",
       clean: true,
     },
     module: {
       rules: [
         {
-          test: /\.jsx?$/,
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: "javascript/auto", // ✅ Treat .mjs files as standard JS
+        },
+        {
+          test: /\.(js|jsx)$/,
           exclude: /node_modules/,
           use: "babel-loader",
         },
@@ -30,14 +38,21 @@ module.exports = async () => {
       ],
     },
     resolve: {
-      extensions: [".js", ".jsx"],
+      extensions: [".js", ".jsx", ".mjs"],
+      mainFields: ["module", "main"], // Prefer ES module builds first
     },
     optimization: {
       splitChunks: {
         chunks: "all",
         cacheGroups: {
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/, // ✅ Ensures only React & ReactDOM are in root.js
+            name: "root",
+            chunks: "all",
+            enforce: true,
+          },
           vendors: {
-            test: /[\\/]node_modules[\\/]/, // Other node_modules dependencies
+            test: /[\\/]node_modules[\\/](?!react|react-dom).*/, // ✅ Exclude React & ReactDOM from vendors.js
             name: "vendors",
             chunks: "all",
             enforce: true,
@@ -68,26 +83,21 @@ module.exports = async () => {
                 )}\`);
               </script>
               <script type="text/javascript">
-
-              
-               
-              fetch("/js/vendors.js").then((response) => {
-                return response.text();
-              }).then((code) => {
-                const script = document.createElement("script");
-                script.textContent = code;
-                document.body.appendChild(script);
-
-                ["js/root.js", "js/app.js"].forEach((src) => {
+                function loadScript(src, callback) {
                   const script = document.createElement("script");
                   script.src = src;
                   script.async = true;
+                  script.onload = callback;
                   document.body.appendChild(script);
                 }
-                );
 
-              });
-
+                loadScript("/js/root.js", function() {
+                  loadScript("/js/961.js", function() {
+    loadScript("/js/app.js", function() {
+                    loadScript("/js/vendors.js");
+                  });
+                  });
+                });
               </script> 
             </body>
           </html>
