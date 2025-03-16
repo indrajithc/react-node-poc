@@ -6,18 +6,17 @@ import "./App.css";
 
 // Import Swiper styles 
 // import Slider from "./Slider";
+import Slider from "./SliderV2";
 
 
-const Slider = lazy(() => import('./Slider'));
+// const Slider = lazy(() => import('./SliderV2'));
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <>
-     <Suspense>
      <Slider />
-     </Suspense>
       {/* <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
