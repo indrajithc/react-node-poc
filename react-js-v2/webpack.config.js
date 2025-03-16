@@ -2,7 +2,6 @@ const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const SaveChunksPlugin = require("./SaveChunksPlugin");
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = async () =>{
   const { html: htmlContent, props } = await require("./renderStaticHTML")();
@@ -22,7 +21,7 @@ module.exports = async () =>{
       path: path.resolve(process.cwd(), "dist"),
       filename: "js/[name].js", // ✅ root.js & app.js
       chunkFilename: "js/[name].[contenthash].js",
-      clean: true,
+      // clean: true,
     },
   module: {
     rules: [
@@ -92,32 +91,47 @@ module.exports = async () =>{
               )}\`);
             </script>
             <script type="text/javascript">
-              function loadScript(src, callback) {
-                const script = document.createElement("script");
-                script.src = src;
-                script.async = true;
-                script.onload = callback;
-                document.body.appendChild(script);
-              }
+             
+  
+  function loadScript(url, callback) {
+  const script = document.createElement("script");
+  script.src = url;
+  script.onload = callback || function () {};
+  document.body.appendChild(script);
+}
 
-              loadScript("/js/root.js", function() {
-                loadScript("/js/961.js", function() {
-  loadScript("/js/app.js", function() {
-                  loadScript("/js/vendors.js");
-                });
-                });
-              });
+// Load all root.js chunks in parallel and merge them
+Promise.all([
+  fetch("/custom_chunks/root_1.js"),
+  fetch("/custom_chunks/root_2.js"),
+  fetch("/custom_chunks/root_3.js"),
+  fetch("/custom_chunks/root_4.js")
+])
+  .then(responses => Promise.all(responses.map(response => response.text())))
+  .then(chunks => {
+    // Join all chunks and execute as a script
+    const script = document.createElement("script");
+    script.text = chunks.join("");
+    document.body.appendChild(script);
+    
+    // After root.js is loaded, load additional scripts in sequence
+    loadScript("/js/961.js", function () {
+      loadScript("/js/app.js", function () {
+        loadScript("/js/vendors.js");
+      });
+    });
+  })
+  .catch(error => console.error("Error loading root.js chunks:", error));
+  
             </script> 
           </body>
         </html>
       `,
       inject: false,
     }),
-    new SaveChunksPlugin( ),
-
-    new CleanWebpackPlugin({
-      cleanOnceBeforeBuildPatterns: [ '!custom_chunks/**'], // ❌ Don't delete custom_chunks
-    }),
+    new SaveChunksPlugin({
+      outputDir: "custom_chunks",
+    }) 
   ],
   devServer: {
     port: 3000, // port where your app will be available
