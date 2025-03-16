@@ -1,6 +1,8 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const SaveChunksPlugin = require("./SaveChunksPlugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = async () =>{
   const { html: htmlContent, props } = await require("./renderStaticHTML")();
@@ -110,6 +112,11 @@ module.exports = async () =>{
         </html>
       `,
       inject: false,
+    }),
+    new SaveChunksPlugin( ),
+
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: [ '!custom_chunks/**'], // ❌ Don't delete custom_chunks
     }),
   ],
   devServer: {
